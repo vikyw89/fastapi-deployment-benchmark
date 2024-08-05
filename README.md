@@ -39,6 +39,12 @@ async def aread_item(item_id: int, q: Union[str, None] = None):
 | Async    | `ab -c 10000 -n 10000 "http://localhost:8000/async/31"` | 7593.36 [#/sec]            |
 | Sync     | `ab -c 10000 -n 10000 "http://localhost:8000/sync/31"`  | 155.80 [#/sec]             |
 
+### Running with `uvicorn benchmark.main:app --workers 4 --host 0.0.0.0 --port 8000`
+
+| Endpoint | Command                                                 | Requests per second (mean) |
+| -------- | ------------------------------------------------------- | -------------------------- |
+| Async    | `ab -c 10000 -n 10000 "http://localhost:8000/async/31"` | 7507.83 [#/sec]            |
+
 ## Conclusion
 
 - Asynchronous endpoints significantly outperform synchronous ones in terms of requests per second.

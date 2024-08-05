@@ -18,4 +18,5 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-start = "scripts.start:run"
+start_gunicorn = "scripts.start_gunicorn:run"
+start_uvicorn = "scripts.start_uvicorn:run"
