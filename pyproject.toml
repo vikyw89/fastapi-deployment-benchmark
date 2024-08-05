@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "benchmark"
+version = "0.1.0"
+description = ""
+authors = ["vikyw89 <vikyw89@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.112.0"}
+uvicorn = {extras = ["standard"], version = "^0.30.5"}
+gunicorn = "^22.0.0"
+
+
+ruff = "^0.5.6"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "scripts.start:run"
