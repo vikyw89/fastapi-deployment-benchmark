@@ -1,9 +1,14 @@
+# FastAPI Benchmark
+
+This README provides a benchmark comparison between synchronous and asynchronous endpoints in FastAPI, running under different server configurations.
+
+## Server Code
+
 ```python
 @app.get("/sync/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     time.sleep(1)
     return {"item_id": item_id, "q": q}
-
 
 @app.get("/async/{item_id}")
 async def aread_item(item_id: int, q: Union[str, None] = None):
@@ -11,62 +16,33 @@ async def aread_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 ```
 
-server is run with
+## Benchmark Results
 
-```python
-fastapi run benchmark/main.py
-```
+### Running with `fastapi run benchmark/main.py`
 
-test is run with
+| Endpoint | Command                                                 | Requests per second (mean) |
+| -------- | ------------------------------------------------------- | -------------------------- |
+| Async    | `ab -c 10000 -n 10000 "http://localhost:8000/async/31"` | 1496.38 [#/sec]            |
+| Sync     | `ab -c 10000 -n 10000 "http://localhost:8000/sync/31"`  | 39.48 [#/sec]              |
 
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
+### Running with `poetry run gunicorn benchmark.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker`
 
-result = Requests per second: 1496.38 [#/sec] (mean)
+| Endpoint | Command                                                 | Requests per second (mean) |
+| -------- | ------------------------------------------------------- | -------------------------- |
+| Async    | `ab -c 10000 -n 10000 "http://localhost:8000/async/31"` | 3462.74 [#/sec]            |
+| Sync     | `ab -c 10000 -n 10000 "http://localhost:8000/sync/31"`  | 105.77 [#/sec]             |
 
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
+### Running with `poetry run gunicorn benchmark.main:app --workers 12 --worker-class uvicorn.workers.UvicornWorker`
 
-result = Requests per second: 39.48 [#/sec] (mean)
+| Endpoint | Command                                                 | Requests per second (mean) |
+| -------- | ------------------------------------------------------- | -------------------------- |
+| Async    | `ab -c 10000 -n 10000 "http://localhost:8000/async/31"` | 7593.36 [#/sec]            |
+| Sync     | `ab -c 10000 -n 10000 "http://localhost:8000/sync/31"`  | 155.80 [#/sec]             |
 
-server is run with
+## Conclusion
 
-```bash
-poetry run gunicorn benchmark.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
-```
+- Asynchronous endpoints significantly outperform synchronous ones in terms of requests per second.
+- Increasing the number of workers with Gunicorn improves the performance for both synchronous and asynchronous endpoints.
+- The asynchronous approach is particularly beneficial for I/O-bound operations, as demonstrated in this benchmark.
 
-test is run with
-
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
-
-Requests per second: 3462.74 [#/sec] (mean)
-
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
-
-Requests per second: 105.77 [#/sec] (mean)
-
-server is run with
-
-```bash
-poetry run gunicorn benchmark.main:app --workers 12 --worker-class uvicorn.workers.UvicornWorker
-```
-
-test is run with
-
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
-
-Requests per second: 7593.36 [#/sec] (mean)
-
-```bash
-ab -c 10000 -n 10000 "http://localhost:8000/async/31"
-```
-
-Requests per second: 155.80 [#/sec] (mean)
+### @vikyw89-20240805
