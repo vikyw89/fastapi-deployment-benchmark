@@ -1,7 +1,17 @@
+from datetime import timedelta
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import URL
 import os
 import logging
+from prisma import Prisma
+
+prisma = Prisma(
+    connect_timeout=timedelta(hours=1),
+    http={
+        "timeout": 360,
+    },
+)
+
 
 logger = logging.getLogger(__name__)
 url_object = URL.create(
